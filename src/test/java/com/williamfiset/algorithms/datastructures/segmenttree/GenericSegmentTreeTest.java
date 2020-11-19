@@ -225,6 +225,7 @@ public class GenericSegmentTreeTest {
       GenericSegmentTree.SegmentCombinationFn.MIN,
       GenericSegmentTree.SegmentCombinationFn.MAX,
       GenericSegmentTree.SegmentCombinationFn.GCD,
+      // GenericSegmentTree.SegmentCombinationFn.PRODUCT,
     };
 
     GenericSegmentTree.RangeUpdateFn[] rangeUpdateFns = {
@@ -249,7 +250,7 @@ public class GenericSegmentTreeTest {
 
         if (combinationFn == GenericSegmentTree.SegmentCombinationFn.GCD
             && rangeUpdateFn == GenericSegmentTree.RangeUpdateFn.ADDITION) {
-          // Not supported yet
+          // Not supported
           continue;
         }
 
@@ -300,15 +301,20 @@ public class GenericSegmentTreeTest {
               bf = bruteForceMax(ar, i1, i2);
             } else if (combinationFn == GenericSegmentTree.SegmentCombinationFn.GCD) {
               bf = bruteForceGcd(ar, i1, i2);
+            } else if (combinationFn == GenericSegmentTree.SegmentCombinationFn.PRODUCT) {
+              bf = bruteForceMul(ar, i1, i2);
             }
 
             long segTreeAnswer = st.rangeQuery1(i1, i2);
-            // System.out.printf("Type: %s QUERY [%d, %d], want = %d, got = %d\n", combinationFn,
-            // i1, i2, bf, segTreeAnswer);
-            // if (bf != segTreeAnswer) {
-            // System.out.println(java.util.Arrays.toString(ar));
-            // }
-            assertThat(bf).isEqualTo(segTreeAnswer);
+            if (bf != segTreeAnswer) {
+
+              System.out.printf(
+                  "Range query type: %s, range update type: %s, QUERY [%d, %d], want = %d, got = %d\n",
+                  combinationFn, rangeUpdateFn, i1, i2, bf, segTreeAnswer);
+
+              System.out.println(java.util.Arrays.toString(ar));
+            }
+            assertThat(segTreeAnswer).isEqualTo(bf);
           }
         }
       }
@@ -355,6 +361,14 @@ public class GenericSegmentTreeTest {
     long m = values[l];
     for (int i = l; i <= r; i++) {
       m = Math.max(m, values[i]);
+    }
+    return m;
+  }
+
+  private static long bruteForceMul(long[] values, int l, int r) {
+    long m = 1L;
+    for (int i = l; i <= r; i++) {
+      m *= values[i];
     }
     return m;
   }
